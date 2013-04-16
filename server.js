@@ -1,14 +1,5 @@
 var restify = require('restify');
 
-function activate(req, res, next) {
-  var test = {
-    message: 'hello ' + req.params.name
-  }
-  res.contentType = 'json';
-  res.send(thing);
-  return next();
-}
-
 function home(req, res, next) {
   var message = 'Welcome to the robot webserver. To access the API visit the <a href="/action">action</a> page.';
   res.setHeader('Content-Type', 'text/html');
@@ -67,11 +58,6 @@ server.use(restify.bodyParser({ mapParams: false }));
 server.get('/', home);
 server.get('/action', instruct);
 server.head('/', instruct);
-server.post('/action', function create(req, res, next) {
-  res.setHeader('Content-Type', 'application/json');
-  res.send(201, Math.random().toString(36).substr(3, 8));
-  return next();
-});
 server.put('/action', send);
 
 server.listen(8888, function() {
