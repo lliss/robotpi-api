@@ -1,13 +1,6 @@
 var restify = require('restify');
+var gpio = require("pi-gpio");
 
-function activate(req, res, next) {
-  var test = {
-    message: 'hello ' + req.params.name
-  }
-  res.contentType = 'json';
-  res.send(thing);
-  return next();
-}
 
 function home(req, res, next) {
   var message = 'Welcome to the robot webserver. To access the API visit the <a href="/action">action</a> page.';
@@ -44,7 +37,9 @@ function send(req, res, next) {
   res.setHeader('Content-Type', 'application/json');
   res.send({message: 'PUTTING THE DATA'});
   res.end();
-  console.log(req.body);
+  var fire = req.body.fire;
+  console.log(fire);
+  controlPi(fire);
   return next();
 }
 
@@ -67,13 +62,49 @@ server.use(restify.bodyParser({ mapParams: false }));
 server.get('/', home);
 server.get('/action', instruct);
 server.head('/', instruct);
-server.post('/action', function create(req, res, next) {
-  res.setHeader('Content-Type', 'application/json');
-  res.send(201, Math.random().toString(36).substr(3, 8));
-  return next();
-});
 server.put('/action', send);
 
 server.listen(8888, function() {
   console.log('%s listening at %s', server.name, server.url);
 });
+
+function controlPi(action) {
+  var dirPin1 = 12;
+  var dirPin2 = 16;
+  var stopPin = 18;
+
+  switch (action) {
+    case 'forward':
+      pinControl(dirPin1, 0);
+      pinControl(dirPin2, 0);
+      pinControl(stopPin, 1);
+      break;
+    case 'reverse':
+      pinControl(dirPin1, 1);
+      pinControl(dirPin2, 1);
+      pinControl(stopPin, 1);
+      break;
+    case 'left':
+      pinControl(dirPin1, 0);
+      pinControl(dirPin2, 1);
+      pinControl(stopPin, 1);
+      break;
+    case 'right':
+      pinControl(dirPin1, 1);
+      pinControl(dirPin2, 0);
+      pinControl(stopPin, 1);
+      break;
+    case 'stop':
+    default:
+      pinControl(stopPin, 0);
+      break;
+  }
+}
+
+function pinControl(pin, on) {
+  gpio.open(pin, "output", function(err) {        // Open pin for output
+    gpio.write(pin, on, function() {            // Set pin on or off
+      gpio.close(pin);                        // Close pin
+    });
+  });
+}
