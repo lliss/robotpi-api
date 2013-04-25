@@ -1,7 +1,6 @@
 var restify = require('restify');
 var gpio = require("pi-gpio");
 
-
 function home(req, res, next) {
   var message = 'Welcome to the robot webserver. To access the API visit the <a href="/action">action</a> page.';
   res.setHeader('Content-Type', 'text/html');
