@@ -68,18 +68,27 @@ var server = restify.createServer({
 });
 server.use(restify.bodyParser({ mapParams: false }));
 
+/**
+ * Set up routes.
+ */
 // Give instructions if they just do a get.
 server.get('/', home);
 server.get('/action', instruct);
 server.head('/', instruct);
+
+// Handle activations on PUT.
 server.put('/action', send);
 
+// API Server listens on 8888.
 server.listen(8888, function() {
   console.log('%s listening at %s', server.name, server.url);
 });
 
 /**
  * Based on the requested action activate associated GPIO pins.
+ *
+ * @param string action
+ *   The action to perform on the robot.
  */
 function controlPi(action) {
   // These pin numbers are wrong since the GPIO library seems to be coded
