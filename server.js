@@ -1,3 +1,10 @@
+/**
+ * @file
+ * Provide the control API for the Raspberry Pi robot.
+ * Server listens on 8888 and works with PUT requests.
+ * Instructions can be seen with a GET.
+ */
+
 var restify = require('restify');
 var gpio = require("pi-gpio");
 
